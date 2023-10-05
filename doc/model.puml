@@ -1,21 +1,22 @@
 @startuml
 
 !theme monokai_pro from ..\.styles
-scale 2
+'scale 2
 
 hide abstract empty members
 hide class empty members
 hide enum empty members
 
 abstract list
+abstract dict
 
-enum Kind {
-    CAT
-    DOG
-    TURTLE
-    SNAKE
-    ...
-}
+'enum Kind {
+'    CAT
+'    DOG
+'    TURTLE
+'    SNAKE
+'    ...
+'}
 
 enum Maturity {
     CUB
@@ -49,9 +50,16 @@ class State <<memento>> {
     ...
 }
 
-class KindParameters {
+class Kind {
+    +name: <i>str</i>
+    +image: <i>Path</i>
+}
+
+class MatureOptions {
     +days: <i>int</i>
     +params: <i>dict</i>[<i>Type</i>, Parameter]
+    +player_actions: <i>list</i>[Action]
+    +creature_actions: <i>set</i>[Action]
 }
 
 abstract Parameter <<observer>> {
@@ -152,10 +160,12 @@ Creature o-up- Kind
 
 Kind o-left- Maturity
 
-Kind o- KindParameters
+dict <|-right- Kind
 
-KindParameters o-- Action
-KindParameters o-- Parameter
+Kind *- MatureOptions
+
+MatureOptions o-- Action
+MatureOptions o-- Parameter
 
 Parameter <|-- Health
 Parameter <|-- Hunger
