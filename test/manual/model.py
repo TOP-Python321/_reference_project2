@@ -3,7 +3,11 @@ from collections.abc import Iterable
 from enum import Enum
 from numbers import Real
 from pathlib import Path
+from sys import path
 from typing import Type
+
+
+ROOT_DIR = Path(path[0]).parent.parent
 
 
 class Maturity(Enum):
@@ -162,6 +166,11 @@ class PlayRope(Action):
         print('верёвочка!')
 
 
+class PlayTail(Action):
+    def action(self):
+        print('бегает за хвостом')
+
+
 class Sleep(Action):
     def action(self):
         print('сон')
@@ -201,7 +210,7 @@ class Kind(dict):
 
 cat_kind = Kind(
     'Кот',
-    'data/images/cat.png',
+    ROOT_DIR / 'data/images/cat.png',
     {
         Maturity.CUB: MatureOptions(
             4,
@@ -248,6 +257,100 @@ cat_kind = Kind(
             creature_actions={
                 Sleep(30)
             }
+        ),
+    }
+)
+dog_kind = Kind(
+    'Пёс',
+    ROOT_DIR / 'data/images/dog.png',
+    {
+        Maturity.CUB: MatureOptions(
+            4,
+            Health(12, 0, 25),
+            Satiety(7, 0, 25),
+            player_actions=[
+                Feed(20),
+            ],
+            creature_actions={
+                PlayTail(100),
+            }
+        ),
+        Maturity.YOUNG: MatureOptions(
+            11,
+            Health(0, 0, 50),
+            Satiety(0, 0, 30),
+            player_actions=[
+                Feed(25),
+            ],
+            creature_actions={
+                PlayTail(100),
+                Sleep(120),
+            }
+        ),
+        Maturity.ADULT: MatureOptions(
+            20,
+            Health(0, 0, 45),
+            Satiety(0, 0, 25),
+            player_actions=[
+                Feed(20),
+            ],
+            creature_actions={
+                Sleep(60),
+                PlayTail(180),
+            }
+        ),
+        Maturity.OLD: MatureOptions(
+            12,
+            Health(0, 0, 35),
+            Satiety(0, 0, 20),
+            player_actions=[
+                Feed(10),
+            ],
+            creature_actions={
+                Sleep(30)
+            }
+        ),
+    }
+)
+mouse_kind = Kind(
+    'Мыш',
+    ROOT_DIR / 'data/images/mouse.png',
+    {
+        Maturity.CUB: MatureOptions(
+            4,
+            Health(5, 0, 15),
+            Satiety(5, 0, 15),
+            player_actions=[
+                Feed(20),
+            ],
+            creature_actions=set()
+        ),
+        Maturity.YOUNG: MatureOptions(
+            11,
+            Health(0, 0, 50),
+            Satiety(0, 0, 30),
+            player_actions=[
+                Feed(25),
+            ],
+            creature_actions=set()
+        ),
+        Maturity.ADULT: MatureOptions(
+            20,
+            Health(0, 0, 45),
+            Satiety(0, 0, 25),
+            player_actions=[
+                Feed(20),
+            ],
+            creature_actions=set()
+        ),
+        Maturity.OLD: MatureOptions(
+            12,
+            Health(0, 0, 35),
+            Satiety(0, 0, 20),
+            player_actions=[
+                Feed(10),
+            ],
+            creature_actions=set()
         ),
     }
 )

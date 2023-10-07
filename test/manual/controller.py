@@ -21,7 +21,7 @@ class App:
 
 class LoadCreature:
     default_path: str | Path = ROOT_DIR / 'data/creature.save'
-    game_days_to_real_hours: frac = frac(1, ...)
+    game_days_to_real_hours: frac = frac(1, 2)
 
     @classmethod
     def save(cls, creature: model.Creature):
@@ -54,4 +54,9 @@ class MainMenu:
         pass
 
 
+class LoadKinds(list):
+    def __init__(self, *kinds: model.Kind):
+        super().__init__(kinds)
 
+
+loaded_kinds = LoadKinds(model.cat_kind, model.dog_kind, model.mouse_kind)
