@@ -133,15 +133,17 @@ class Satiety(Parameter):
 
 class Action(ABC):
     name: str
-    
+
     def __init__(
             self,
             timer: int = None,
+            image_path: str | Path = None,
             origin: Creature = None,
     ):
         self.timer = timer
+        self.image = Path(image_path)
         self.origin = origin
-    
+
     @abstractmethod
     def action(self):
         pass
@@ -151,37 +153,43 @@ class Feed(Action):
     def __init__(
             self,
             amount: int,
+            image_path: str | Path = None,
             timer: int = None,
             origin: Creature = None,
     ):
-        super().__init__(timer, origin)
+        super().__init__(timer, image_path, origin)
         self.amount = amount
-    
+
     def action(self):
         self.origin.params[Satiety].value += self.amount
 
 
+class Play(Action):
+    def action(self) -> str:
+        return f'вы играете с {self.origin.name}'
+
+
 class PlayRope(Action):
-    def action(self):
-        print('верёвочка!')
+    def action(self) -> str:
+        return 'верёвочка!'
 
 
 class PlayTail(Action):
-    def action(self):
-        print('бегает за хвостом')
+    def action(self) -> str:
+        return 'бегает за хвостом'
 
 
 class Sleep(Action):
-    def action(self):
-        print('сон')
+    def action(self) -> str:
+        return 'сон'
 
 
 class MatureOptions:
     def __init__(
-            self, 
-            days: int, 
-            *params: Parameter, 
-            player_actions: list[Action], 
+            self,
+            days: int,
+            *params: Parameter,
+            player_actions: list[Action],
             creature_actions: set[Action]
     ):
         self.days = days
@@ -217,7 +225,8 @@ cat_kind = Kind(
             Health(10, 0, 20),
             Satiety(5, 0, 25),
             player_actions=[
-                Feed(20),
+                Feed(20, ROOT_DIR / 'data/images/btn1.png'),
+                Play(0, ROOT_DIR / 'data/images/btn2.png')
             ],
             creature_actions={
                 PlayRope(100),
@@ -228,7 +237,7 @@ cat_kind = Kind(
             Health(0, 0, 50),
             Satiety(0, 0, 30),
             player_actions=[
-                Feed(25),
+                Feed(25, ROOT_DIR / 'data/images/btn1.png'),
             ],
             creature_actions={
                 PlayRope(100),
@@ -240,7 +249,7 @@ cat_kind = Kind(
             Health(0, 0, 45),
             Satiety(0, 0, 25),
             player_actions=[
-                Feed(20),
+                Feed(20, ROOT_DIR / 'data/images/btn1.png'),
             ],
             creature_actions={
                 Sleep(60),
@@ -252,7 +261,7 @@ cat_kind = Kind(
             Health(0, 0, 35),
             Satiety(0, 0, 20),
             player_actions=[
-                Feed(10),
+                Feed(10, ROOT_DIR / 'data/images/btn1.png'),
             ],
             creature_actions={
                 Sleep(30)
@@ -269,7 +278,7 @@ dog_kind = Kind(
             Health(12, 0, 25),
             Satiety(7, 0, 25),
             player_actions=[
-                Feed(20),
+                Feed(20, ROOT_DIR / 'data/images/btn1.png'),
             ],
             creature_actions={
                 PlayTail(100),
@@ -280,7 +289,7 @@ dog_kind = Kind(
             Health(0, 0, 50),
             Satiety(0, 0, 30),
             player_actions=[
-                Feed(25),
+                Feed(25, ROOT_DIR / 'data/images/btn1.png'),
             ],
             creature_actions={
                 PlayTail(100),
@@ -292,7 +301,7 @@ dog_kind = Kind(
             Health(0, 0, 45),
             Satiety(0, 0, 25),
             player_actions=[
-                Feed(20),
+                Feed(20, ROOT_DIR / 'data/images/btn1.png'),
             ],
             creature_actions={
                 Sleep(60),
@@ -304,7 +313,7 @@ dog_kind = Kind(
             Health(0, 0, 35),
             Satiety(0, 0, 20),
             player_actions=[
-                Feed(10),
+                Feed(10, ROOT_DIR / 'data/images/btn1.png'),
             ],
             creature_actions={
                 Sleep(30)
@@ -321,7 +330,7 @@ mouse_kind = Kind(
             Health(5, 0, 15),
             Satiety(5, 0, 15),
             player_actions=[
-                Feed(20),
+                Feed(20, ROOT_DIR / 'data/images/btn1.png'),
             ],
             creature_actions=set()
         ),
@@ -330,7 +339,7 @@ mouse_kind = Kind(
             Health(0, 0, 50),
             Satiety(0, 0, 30),
             player_actions=[
-                Feed(25),
+                Feed(25, ROOT_DIR / 'data/images/btn1.png'),
             ],
             creature_actions=set()
         ),
@@ -339,7 +348,7 @@ mouse_kind = Kind(
             Health(0, 0, 45),
             Satiety(0, 0, 25),
             player_actions=[
-                Feed(20),
+                Feed(20, ROOT_DIR / 'data/images/btn1.png'),
             ],
             creature_actions=set()
         ),
@@ -348,7 +357,7 @@ mouse_kind = Kind(
             Health(0, 0, 35),
             Satiety(0, 0, 20),
             player_actions=[
-                Feed(10),
+                Feed(10, ROOT_DIR / 'data/images/btn1.png'),
             ],
             creature_actions=set()
         ),
