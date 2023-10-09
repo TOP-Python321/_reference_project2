@@ -37,6 +37,15 @@ class Creature:
         }
         self.history: History = History()
 
+    def __repr__(self):
+        return '\n'.join(
+            f'{cls.__name__.lower()}: {param.value:.1f}'
+            for cls, param in self.params.items()
+        )
+
+    def __str__(self):
+        return f"{self.name}: {'/'.join(f'{p.value:.1f}' for p in self.params.values())}"
+
     def update(self):
         for param in self.params.values():
             param.update()
@@ -52,9 +61,6 @@ class Creature:
         for param in self.params.values():
             setattr(state, param.__class__.__name__, param.value)
         self.history.append(state)
-
-    def __repr__(self):
-        return f"<{self.name}: {'/'.join(f'{p.value:.1f}' for p in self.params.values())}>"
 
 
 class History(list):
