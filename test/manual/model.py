@@ -156,6 +156,19 @@ class Action(ABC):
         pass
 
 
+class NoAction:
+    __instance: Self = None
+
+    def __new__(cls):
+        if cls.__instance is None:
+            self = super().__new__(cls)
+            self.image = ROOT_DIR / 'data/images/no_action.png'
+            self.state = 'disabled'
+            self.action = lambda: None
+            cls.__instance = self
+        return cls.__instance
+
+
 class Feed(Action):
     def __init__(
             self,
