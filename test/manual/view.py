@@ -22,10 +22,15 @@ class RootWidget(Tk):
 
         self.mainframe: Frame = None
 
+    def change_frame(self, new_frame: Frame):
+        self.mainframe.destroy()
+        self.mainframe = new_frame
+        self.update()
+
 
 class MainMenu(Frame):
     """"""
-    def __init__(self, master: Tk, kinds: controller.LoadKinds[model.Kind]):
+    def __init__(self, master: RootWidget, kinds: controller.LoadKinds[model.Kind]):
         super().__init__(master)
         self.grid(
             row=0, column=0,
@@ -43,7 +48,10 @@ class MainMenu(Frame):
             Button(
                 self,
                 image=self._images[i],
-                # command=,
+                # для теста:
+                command=lambda: master.change_frame(Game(master, yara)),
+                # на перспективу:
+                # command=lambda: master.change_frame(Game(master, controller.MainMenu.choose_kind(kind))),
             ).grid(
                 row=row, column=column,
                 sticky='nsew',
@@ -52,7 +60,7 @@ class MainMenu(Frame):
 
 class Game(Frame):
     """"""
-    def __init__(self, master: Tk):
+    def __init__(self, master: RootWidget):
         super().__init__(master)
         self.grid(
             row=0, column=0,
@@ -157,12 +165,12 @@ class Game(Frame):
 if __name__ == '__main__':
     root = RootWidget()
 
-    # root.mainframe = MainMenu(root, controller.loaded_kinds)
+    root.mainframe = MainMenu(root, controller.loaded_kinds)
 
-    root.mainframe = Game(root)
-    root.mainframe.change_message('test message\nтестовое сообщение')
-    root.mainframe.change_params('health: 20\nсытость: 15')
-    root.mainframe.change_image(r'd:\G-Doc\TOP Academy\Python web\321\projects\2\_ref\doc\.img_refs\dogs2.png')
+    yara = model.Creature(model.cat_kind, 'Яра')
+    # root.mainframe = Game(root, yara)
+    # root.mainframe.change_params('health: 20\nсытость: 15')
+    # root.mainframe.change_image(r'd:\G-Doc\TOP Academy\Python web\321\projects\2\_ref\doc\.img_refs\dogs2.png')
 
     root.mainloop()
 
