@@ -60,7 +60,7 @@ class MainMenu(Frame):
 
 class Game(Frame):
     """"""
-    def __init__(self, master: RootWidget):
+    def __init__(self, master: RootWidget, origin: model.Creature):
         super().__init__(master)
         self.grid(
             row=0, column=0,
@@ -120,6 +120,9 @@ class Game(Frame):
             pady=(0, 20),
         )
 
+        self.create_buttons(origin)
+
+    def create_buttons(self, origin: model.Creature):
         buttons_panel = Frame(self)
         buttons_panel.grid(
             row=2, column=0,
@@ -130,11 +133,22 @@ class Game(Frame):
         self._buttons_images: list[PhotoImage] = []
         paddings = (11, 11, 11, 11, 11, 0)
         for i, pad in enumerate(paddings):
-            self._buttons_images.append(PhotoImage(file=fr'd:\G-Doc\TOP Academy\Python web\321\projects\2\_ref\data\images\btn{i+1}.png'))
+            try:
+                action = origin.player_actions[i]
+            except IndexError:
+                action = model.NoAction()
+            self._buttons_images.append(PhotoImage(
+                width=75, height=75,
+                file=action.image
+            ))
             btn = Button(
                 buttons_panel,
                 image=self._buttons_images[-1],
-                # command=,
+                state=action.state,
+                # необходимо добавить параметр в lambda-функцию, чтобы каждая из создаваемых в цикле функций обращалась к соответствующему экземпляру action
+                # иначе, функции обращаются к action только во время вызова, а не в момент создания
+                # https://docs.python.org/3/faq/programming.html#why-do-lambdas-defined-in-a-loop-with-different-values-all-return-the-same-result
+                command=lambda act=action: self.change_message(f'{act}\n{act.action()}'),
             )
             btn.grid(
                 row=0, column=i,
@@ -174,8 +188,8 @@ if __name__ == '__main__':
     # root.mainframe = MainMenu(root, controller.loaded_kinds)
 
     yara = model.Creature(model.cat_kind, 'Яра')
-    root.mainframe = Game(root)
-    root.mainframe.change_params('health: 20\nсытость: 15')
+    root.mainframe = Game(root, yara)
+    root.mainframe.change_message('\n'.join(str(act) for act in yara.player_actions))
     root.mainframe.change_image(r'd:\G-Doc\TOP Academy\Python web\321\projects\2\_ref\doc\.img_refs\dogs2.png')
     root.mainframe.update_creature(yara)
 
