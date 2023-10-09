@@ -38,7 +38,7 @@ class Creature:
 
     def __repr__(self):
         return '\n'.join(
-            f'{cls.__name__.lower()}: {param.value:.1f}'
+            f'{param.name}: {param.value:.1f}'
             for cls, param in self.params.items()
         )
 
@@ -83,6 +83,8 @@ class State:
 
 
 class Parameter(ABC):
+    name: str
+
     def __init__(
             self,
             value: float,
@@ -124,6 +126,8 @@ class Parameter(ABC):
 
 
 class Health(Parameter):
+    name = 'здоровье'
+
     def update(self):
         hunger = self.origin.kind[self.origin.mature].params[Satiety]
         critical = sum(hunger.range) / 4
@@ -132,6 +136,8 @@ class Health(Parameter):
 
 
 class Satiety(Parameter):
+    name = 'сытость'
+
     def update(self):
         self.value -= 1
 
@@ -170,6 +176,8 @@ class NoAction:
 
 
 class Feed(Action):
+    name = 'покормить питомца'
+
     def __init__(
             self,
             amount: int,
@@ -187,6 +195,8 @@ class Feed(Action):
 
 
 class Play(Action):
+    name = 'поиграть с питомцем'
+
     def action(self) -> str:
         return f'вы играете с {self.origin.name}'
 

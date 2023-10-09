@@ -1,7 +1,7 @@
 @startuml
 
-!theme monokai_pro from ..\.styles
-'scale 2
+'!theme monokai_pro from ..\.styles
+scale 2
 
 hide abstract empty members
 hide class empty members
@@ -63,6 +63,7 @@ class MatureOptions {
 }
 
 abstract Parameter <<observer>> {
+    +{static}name: <i>str</i>
     #value: <i>float</i>
     +min: <i>float</i>
     +max: <i>float</i>
@@ -76,9 +77,11 @@ abstract Parameter <<observer>> {
     +{abstract}update() → <i>None</i>
 }
 class Health {
+    +{static}name: <i>str</i>
     +update()
 }
 class Hunger {
+    +{static}name: <i>str</i>
     +update()
 }
 
@@ -100,17 +103,32 @@ class Hunger {
 '}
 
 
-abstract Action {
+abstract Action <<observer>> {
     +{static}name: <i>str</i>
     +timer: <i>float</i>
+    +image: <i>Path</i>
     +origin: Creature
+    +state = <font:Noto Mono>'normal'</font>
     +{abstract}action()
 }
 class Feed {
     +amount: int
     +action()
 }
+class Play {
+    +action()
+}
 class PlayRope {
+    +action()
+}
+class PlayTail {
+    +action()
+}
+
+class NoAction <<singleton>> {
+    #{static}instance: <i>Self</i>
+    +image = <font:Noto Mono>'.../no_action.png'</font>
+    +state = <font:Noto Mono>'disabled'</font>
     +action()
 }
 
@@ -171,7 +189,12 @@ Parameter <|-- Health
 Parameter <|-- Hunger
 
 Action <|-- Feed
+Action <|-- Play
 Action <|-- PlayRope
+Action <|-- PlayTail
+
+Action -[hidden] NoAction
+MatureOptions -[hidden] NoAction
 
 Feed <|-- CatFeed
 Feed <|-- DogFeed
