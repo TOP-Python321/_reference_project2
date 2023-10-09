@@ -87,7 +87,7 @@ class Game(Frame):
             text_panel,
             textvariable=self.message,
             wraplength=400,
-            font=('Enceladus', 22, 'italic'),
+            font=('Arial Narrow', 16, 'italic'),
             anchor='nw',
             justify='left',
             # background='#ccc',
@@ -102,7 +102,7 @@ class Game(Frame):
             text_panel,
             textvariable=self.params,
             wraplength=160,
-            font=('Candara', 20, 'bold'),
+            font=('Consolas', 16, 'bold'),
             anchor='ne',
             justify='right',
             # background='#ddd',
@@ -161,16 +161,23 @@ class Game(Frame):
         self.screen.configure(image=self._image)
         self.update_idletasks()
 
+    def update_creature(self, origin: model.Creature):
+        origin.update()
+        self.change_params(repr(origin))
+        self.after(1000, lambda: self.update_creature(origin))
+        self.update()
+
 
 if __name__ == '__main__':
     root = RootWidget()
 
-    root.mainframe = MainMenu(root, controller.loaded_kinds)
+    # root.mainframe = MainMenu(root, controller.loaded_kinds)
 
     yara = model.Creature(model.cat_kind, 'Яра')
-    # root.mainframe = Game(root, yara)
-    # root.mainframe.change_params('health: 20\nсытость: 15')
-    # root.mainframe.change_image(r'd:\G-Doc\TOP Academy\Python web\321\projects\2\_ref\doc\.img_refs\dogs2.png')
+    root.mainframe = Game(root)
+    root.mainframe.change_params('health: 20\nсытость: 15')
+    root.mainframe.change_image(r'd:\G-Doc\TOP Academy\Python web\321\projects\2\_ref\doc\.img_refs\dogs2.png')
+    root.mainframe.update_creature(yara)
 
     root.mainloop()
 
