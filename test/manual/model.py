@@ -4,8 +4,7 @@ from enum import Enum
 from numbers import Real
 from pathlib import Path
 from sys import path
-from typing import Type
-
+from typing import Type, Self
 
 ROOT_DIR = Path(path[0]).parent.parent
 
@@ -143,15 +142,17 @@ class Action(ABC):
     def __init__(
             self,
             timer: int = None,
-            image_path: str | Path = None,
+            image: str | Path = None,
             origin: Creature = None,
+            **kwargs
     ):
         self.timer = timer
-        self.image = Path(image_path)
+        self.image = image
         self.origin = origin
+        self.state = 'normal'
 
     @abstractmethod
-    def action(self):
+    def action(self) -> str:
         pass
 
 
@@ -159,15 +160,17 @@ class Feed(Action):
     def __init__(
             self,
             amount: int,
-            image_path: str | Path = None,
             timer: int = None,
+            image: str | Path = None,
             origin: Creature = None,
+            **kwargs
     ):
-        super().__init__(timer, image_path, origin)
+        super().__init__(timer, image, origin)
         self.amount = amount
 
-    def action(self):
+    def action(self) -> str:
         self.origin.params[Satiety].value += self.amount
+        return f'вы покормили {self.origin.name}'
 
 
 class Play(Action):
@@ -231,11 +234,11 @@ cat_kind = Kind(
             Health(10, 0, 20),
             Satiety(5, 0, 25),
             player_actions=[
-                Feed(20, ROOT_DIR / 'data/images/btn1.png'),
-                Play(0, ROOT_DIR / 'data/images/btn2.png')
+                Feed(amount=20, image=ROOT_DIR / 'data/images/btn1.png'),
+                Play(image=ROOT_DIR / 'data/images/btn2.png')
             ],
             creature_actions={
-                PlayRope(100),
+                PlayRope(timer=100),
             }
         ),
         Maturity.YOUNG: MatureOptions(
@@ -243,11 +246,11 @@ cat_kind = Kind(
             Health(0, 0, 50),
             Satiety(0, 0, 30),
             player_actions=[
-                Feed(25, ROOT_DIR / 'data/images/btn1.png'),
+                Feed(amount=25, image=ROOT_DIR / 'data/images/btn1.png'),
             ],
             creature_actions={
-                PlayRope(100),
-                Sleep(120),
+                PlayRope(timer=100),
+                Sleep(timer=120),
             }
         ),
         Maturity.ADULT: MatureOptions(
@@ -255,11 +258,11 @@ cat_kind = Kind(
             Health(0, 0, 45),
             Satiety(0, 0, 25),
             player_actions=[
-                Feed(20, ROOT_DIR / 'data/images/btn1.png'),
+                Feed(amount=20, image=ROOT_DIR / 'data/images/btn1.png'),
             ],
             creature_actions={
-                Sleep(60),
-                PlayRope(180),
+                Sleep(timer=60),
+                PlayRope(timer=180),
             }
         ),
         Maturity.OLD: MatureOptions(
@@ -267,10 +270,10 @@ cat_kind = Kind(
             Health(0, 0, 35),
             Satiety(0, 0, 20),
             player_actions=[
-                Feed(10, ROOT_DIR / 'data/images/btn1.png'),
+                Feed(amount=10, image=ROOT_DIR / 'data/images/btn1.png'),
             ],
             creature_actions={
-                Sleep(30)
+                Sleep(timer=30)
             }
         ),
     }
@@ -284,10 +287,10 @@ dog_kind = Kind(
             Health(12, 0, 25),
             Satiety(7, 0, 25),
             player_actions=[
-                Feed(20, ROOT_DIR / 'data/images/btn1.png'),
+                Feed(amount=20, image=ROOT_DIR / 'data/images/btn1.png'),
             ],
             creature_actions={
-                PlayTail(100),
+                PlayTail(timer=100),
             }
         ),
         Maturity.YOUNG: MatureOptions(
@@ -295,11 +298,11 @@ dog_kind = Kind(
             Health(0, 0, 50),
             Satiety(0, 0, 30),
             player_actions=[
-                Feed(25, ROOT_DIR / 'data/images/btn1.png'),
+                Feed(amount=25, image=ROOT_DIR / 'data/images/btn1.png'),
             ],
             creature_actions={
-                PlayTail(100),
-                Sleep(120),
+                PlayTail(timer=100),
+                Sleep(timer=120),
             }
         ),
         Maturity.ADULT: MatureOptions(
@@ -307,11 +310,11 @@ dog_kind = Kind(
             Health(0, 0, 45),
             Satiety(0, 0, 25),
             player_actions=[
-                Feed(20, ROOT_DIR / 'data/images/btn1.png'),
+                Feed(amount=20, image=ROOT_DIR / 'data/images/btn1.png'),
             ],
             creature_actions={
-                Sleep(60),
-                PlayTail(180),
+                Sleep(timer=60),
+                PlayTail(timer=180),
             }
         ),
         Maturity.OLD: MatureOptions(
@@ -319,10 +322,10 @@ dog_kind = Kind(
             Health(0, 0, 35),
             Satiety(0, 0, 20),
             player_actions=[
-                Feed(10, ROOT_DIR / 'data/images/btn1.png'),
+                Feed(amount=10, image=ROOT_DIR / 'data/images/btn1.png'),
             ],
             creature_actions={
-                Sleep(30)
+                Sleep(timer=30)
             }
         ),
     }
@@ -336,7 +339,7 @@ mouse_kind = Kind(
             Health(5, 0, 15),
             Satiety(5, 0, 15),
             player_actions=[
-                Feed(20, ROOT_DIR / 'data/images/btn1.png'),
+                Feed(amount=20, image=ROOT_DIR / 'data/images/btn1.png'),
             ],
             creature_actions=set()
         ),
@@ -345,7 +348,7 @@ mouse_kind = Kind(
             Health(0, 0, 50),
             Satiety(0, 0, 30),
             player_actions=[
-                Feed(25, ROOT_DIR / 'data/images/btn1.png'),
+                Feed(amount=25, image=ROOT_DIR / 'data/images/btn1.png'),
             ],
             creature_actions=set()
         ),
@@ -354,7 +357,7 @@ mouse_kind = Kind(
             Health(0, 0, 45),
             Satiety(0, 0, 25),
             player_actions=[
-                Feed(20, ROOT_DIR / 'data/images/btn1.png'),
+                Feed(amount=20, image=ROOT_DIR / 'data/images/btn1.png'),
             ],
             creature_actions=set()
         ),
@@ -363,7 +366,7 @@ mouse_kind = Kind(
             Health(0, 0, 35),
             Satiety(0, 0, 20),
             player_actions=[
-                Feed(10, ROOT_DIR / 'data/images/btn1.png'),
+                Feed(amount=10, image=ROOT_DIR / 'data/images/btn1.png'),
             ],
             creature_actions=set()
         ),
