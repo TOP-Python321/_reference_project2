@@ -12,7 +12,7 @@ ROOT_DIR = Path(path[0]).parent.parent
 
 class App:
     def __init__(self):
-        self.creature: model.Creature = LoadCreature.load() if self._is_live() else MainMenu.choose_kind()
+        self.creature: model.Creature = LoadCreature.load() if self._is_live() else MainMenu.start()
 
     @staticmethod
     def _is_live() -> bool:
@@ -49,9 +49,14 @@ class LoadCreature:
 
 
 class MainMenu:
+
     @staticmethod
-    def choose_kind() -> model.Creature:
-        pass
+    def start():
+        """Запускает GUI с фреймом главного меню."""
+
+    @staticmethod
+    def choose_kind(chosen_kind: model.Kind) -> model.Creature:
+        """Создаёт питомца на основе выбранного пользователем вида."""
 
 
 class LoadKinds(list):
