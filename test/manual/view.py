@@ -44,10 +44,17 @@ class MainMenu(Frame):
         img_size = (master.width - pad*2*(columns+1)) // columns - 10
         self._images: list[PhotoImage] = []
         for i, kind in enumerate(kinds):
-            self._images.append(PhotoImage(
-                width=img_size, height=img_size,
-                file=kind.image,
-            ))
+            img = PhotoImage(file=kind.image)
+            img_width, img_height = img.width(), img.height()
+            if img_width != img_size or img_height != img_size:
+                img = _resize_image(
+                    img,
+                    img_width,
+                    img_height,
+                    img_size,
+                    img_size,
+                )
+            self._images.append(img)
             row, column = divmod(i, columns)
             btn = Button(
                 self,
@@ -148,10 +155,17 @@ class Game(Frame):
                 action = origin.player_actions[i]
             except IndexError:
                 action = model.NoAction()
-            self._buttons_images.append(PhotoImage(
-                width=img_size, height=img_size,
-                file=action.image
-            ))
+            img = PhotoImage(file=action.image)
+            img_width, img_height = img.width(), img.height()
+            if img_width != img_size or img_height != img_size:
+                img = _resize_image(
+                    img,
+                    img_width,
+                    img_height,
+                    img_size,
+                    img_size,
+                )
+            self._buttons_images.append(img)
             btn = Button(
                 buttons_panel,
                 image=self._buttons_images[-1],
@@ -177,10 +191,16 @@ class Game(Frame):
         self.update_idletasks()
 
     def change_image(self, img_path: str | Path) -> None:
-        self._image = PhotoImage(
-            width=self._screen_size, height=self._screen_size,
-            file=img_path,
-        )
+        self._image = PhotoImage(file=img_path)
+        img_width, img_height = self._image.width(), self._image.height()
+        if img_width != self._screen_size or img_height != self._screen_size:
+            self._image = _resize_image(
+                self._image,
+                img_width,
+                img_height,
+                self._screen_size,
+                self._screen_size,
+            )
         self.screen.configure(image=self._image)
         self.update_idletasks()
 
@@ -190,6 +210,22 @@ class Game(Frame):
         self.after(1000, lambda: self.update_creature(origin))
         self.update()
 
+
+def _resize_image(
+        image: PhotoImage,
+        old_width: int,
+        old_height: int,
+        new_width: int,
+        new_height: int
+) -> PhotoImage:
+    resized_image = PhotoImage(width=new_width, height=new_height)
+    for x in range(new_width):
+        for y in range(new_height):
+            x_old = x * old_width // new_width
+            y_old = y * old_height // new_height
+            rgb = '#{:02x}{:02x}{:02x}'.format(*image.get(x_old, y_old))
+            resized_image.put(rgb, (x, y))
+    return resized_image
 
 
 if __name__ == '__main__':
